@@ -1,4 +1,5 @@
 import {chromium} from "playwright"  // se puede usar el que sea, incluso puede hacer videos de como recolecta la info
+import {writeFileSync} from "fs"
 
 const browser = await chromium.launch()
 const page       = await browser.newPage()
@@ -26,10 +27,10 @@ const obrasSingulares = [
 
     for (const url of enlacesDeObrasSingulares) {
         const infoObra = await recuperaInfoDe(url)
-        // listaInfoParaBD.push(infoObra)
+        listaInfoParaBD.push(infoObra)
     }
 
-    // guardaEnDisco('infoObras.json', listaInfoParaBD)
+    guardaEnDisco('infoObras.json', listaInfoParaBD)
 
     await browser.close();
 
@@ -44,11 +45,38 @@ async function recuperaUrlsDe(pag) {
 }
 
 async function recuperaInfoDe(url) {
-    const urls = []
+
     await page.goto(url)
-    const locators = page.locator('h3.header-title')
-    for (const locator of await locators.all()) {
-        console.log('Título de obra: ' + await locator.innerText())
+
+    try {
+
+        // locators
+        const locatorTitulo = await page.locator("h3.header-title").textContent();
+        const locatorDescripcion = await page.locator(".detalle .body-content").nth(0).textContent();
+        const locatorProcedencia = await page.locator(".detalle .body-content").nth(1).textContent();
+        const locatorComentario = await page.locator(".detalle .body-content").nth(2).textContent();
+        const locatorImagen = await page.locator(".wrapper-gallery figure a img").getAttribute("src");
+
+
+        return {
+            titulo: locatorTitulo ? locatorTitulo.trim() : "No encontrado",
+            descripcion: locatorDescripcion ? locatorDescripcion.trim() : "No encontrado",
+            procedencia: locatorProcedencia ? locatorProcedencia.trim() : "No encontrado",
+            comentario: locatorComentario ? locatorComentario.trim() : "No encontrado",
+            imagen: locatorImagen ? `https://www.museosdeandalucia.es${locatorImagen}` : "No encontrado"
+        }
+    } catch (err){
+        console.error(err)
+        return null
+    }
+}
+
+function guardaEnDisco(nombreArchivo, datos) {
+    try {
+        writeFileSync(nombreArchivo, JSON.stringify(datos, null, 2), "utf-8");
+        console.log('Archivo guardado correctamente: ' + nombreArchivo);
+    } catch (err) {
+        console.error(err);
     }
 }
 
