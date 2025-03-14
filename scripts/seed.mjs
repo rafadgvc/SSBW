@@ -1,20 +1,29 @@
-import { readFileSync } from "fs"
-import { PrismaClient } from '@prisma/client'
+import { readFileSync, writeFile } from "fs";
+import { PrismaClient } from "@prisma/client";
+import fetch from "node-fetch"; // Necesitarás instalar esto con `npm install node-fetch`
+import path from "path";
 
+const prisma = new PrismaClient();
+const obras = await leerObras("./infoObras.json");
 
-const prisma = new PrismaClient()
-const obras = await leerObras('./infoObras.json')
+console.log(obras);
 
-console.log(obras)
+for (const {imagen, titulo, descripcion, procedencia, comentario} of obras) {
 
-obras.forEach(({imagen, titulo, descripcion, procedencia, comentario}) => {
-    console.log (titulo)
+    let imagePath = null;
 
-    prisma.obra.create(
-        {
+    if (imagen) {
+        try {
+            imagePath = await descargarImagen(imagen, "./public/images");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    prisma.obra.create({
         data: {
             titulo: titulo,
-            imagen: imagen,
+            imagen: imagePath,
             descripcion: descripcion,
             procedencia: procedencia,
             comentario: comentario
@@ -22,7 +31,7 @@ obras.forEach(({imagen, titulo, descripcion, procedencia, comentario}) => {
     }
     ).then(res => console.log(res))
         .catch(err => console.log(err))
-})
+}
 
 
 async function leerObras(archivo){
@@ -37,3 +46,24 @@ async function leerObras(archivo){
     }
 }
 
+async function descargarImagen(url, directorio) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Error al descargar la imagen: ${response.statusText}`);
+
+        const extension = path.extname(new URL(url).pathname) || ".jpg";
+        const nombreArchivo = `${Date.now()}${extension}`;
+        const rutaCompleta = path.join(directorio, nombreArchivo);
+
+        const buffer = await response.buffer();
+        writeFile(rutaCompleta, buffer, (err) => {
+            if (err) throw err;
+            console.log(`Imagen guardada en ${rutaCompleta}`);
+        });
+
+        return `images/${nombreArchivo}`;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
