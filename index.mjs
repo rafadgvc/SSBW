@@ -1,5 +1,8 @@
 import express   from 'express'
 import nunjucks  from 'nunjucks'
+import obrasRouter from "./routes/obras.mjs"
+
+
 
 const IN = process.env.IN || 'development'                                                                    // development o production
 const app = express()
@@ -11,6 +14,10 @@ nunjucks.configure('views', {                                                   
     express: app
 })
 app.set('view engine', 'html')
+
+app.use("/obras", obrasRouter);
+app.use(express.static('public'));
+
 
 app.get('/hola', (req, res) => {          // test para el servidor
     res.send('Hola <b>amigos</b> de <b>internet</b>');

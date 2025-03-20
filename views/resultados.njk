@@ -1,0 +1,40 @@
+{% extends "base.njk" %}
+
+{% block contenido %}
+
+{% if resultados and resultados.length > 0 %}
+{% set max_items = 3 %}
+{% set displayed_results = resultados %}
+<section class="section pt-5">
+    <div class="columns is-multiline">
+        {% for item in displayed_results %}
+        <div class="column is-one-third">
+            <div class="card">
+                <div class="card-image">
+                    <figure class="image is-4by3">
+                        <img src="/{{ item.imagen }}" alt="./../public/{{ item.imagen }}">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content">
+                            <p class="title is-4">{{ item.titulo }}</p>
+                            <p class="subtitle is-6">{{ item.procedencia }}</p>
+                        </div>
+                    </div>
+                    <div class="content">
+                        {{ item.descripcion }}
+                        <br>
+                        <small>{{ item.comentario }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% else %}
+<p>No hay resultados disponibles.</p>
+{% endif %}
+
+{% endblock %}
