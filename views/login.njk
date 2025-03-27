@@ -1,0 +1,132 @@
+{% extends "base.njk" %}
+
+{% block contenido %}
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login y Registro con Bulma</title>
+    <!-- Importar Bulma desde CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <style>
+        /* Estilo personalizado para centrar los formularios */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .auth-form {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            background: #999999;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .auth-form h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .auth-form .field {
+            margin-bottom: 1rem;
+        }
+        .auth-form .button {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+    <!-- Formulario de Login -->
+    <div class="auth-form" id="login-form">
+        <h2 class="title is-4">Iniciar Sesión</h2>
+        <form action="/usuarios/login" method="POST">
+            <div class="field">
+                <label class="label">Correo Electrónico</label>
+                <div class="control">
+                    <input class="input" type="email" name="correo" placeholder="ejemplo@correo.com" required>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Contraseña</label>
+                <div class="control">
+                    <input class="input" type="password" name="password" placeholder="Contraseña" required>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-primary">Iniciar Sesión</button>
+                </div>
+            </div>
+            <p class="has-text-centered">
+                ¿No tienes cuenta? <a href="#" id="switch-to-register">Regístrate aquí</a>
+            </p>
+        </form>
+    </div>
+
+    <!-- Formulario de Registro -->
+    <div class="auth-form is-hidden" id="register-form">
+        <h2 class="title is-4">Registro</h2>
+        <form action="/usuarios/register" method="POST">
+            <div class="field">
+                <label class="label">Nombre</label>
+                <div class="control">
+                    <input class="input" type="text" name="nombre" placeholder="Tu nombre" required>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Correo Electrónico</label>
+                <div class="control">
+                    <input class="input" type="email" name="correo" placeholder="ejemplo@correo.com" required>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Contraseña</label>
+                <div class="control">
+                    <input class="input" type="password" name="password" placeholder="Contraseña" required>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Confirmar Contraseña</label>
+                <div class="control">
+                    <input class="input" type="password" name="repassword" placeholder="Confirmar contraseña" required>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-success">Registrarse</button>
+                </div>
+            </div>
+            <p class="has-text-centered">
+                ¿Ya tienes cuenta? <a href="#" id="switch-to-login">Inicia sesión aquí</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<!-- Script para alternar entre los formularios -->
+<script>
+    document.getElementById('switch-to-register').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('login-form').classList.add('is-hidden');
+        document.getElementById('register-form').classList.remove('is-hidden');
+    });
+
+    document.getElementById('switch-to-login').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('register-form').classList.add('is-hidden');
+        document.getElementById('login-form').classList.remove('is-hidden');
+    });
+</script>
+
+</body>
+</html>
+
+
+{% endblock %}
