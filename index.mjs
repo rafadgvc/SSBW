@@ -4,6 +4,8 @@ import nunjucks  from 'nunjucks'
 import cookieParser from "cookie-parser"
 import jwt from "jsonwebtoken"
 
+import logger from './scripts/logger.mjs'
+
 const IN = process.env.IN || 'development'                                                                    // development o production
 const app = express()
 
@@ -43,19 +45,19 @@ app.listen(PORT, () => {
 
 //
 // // middleware de
-// const autentificación = (req, res, next) => {
-//     const token = req.cookies.access_token;
-//     if (token) {
-//         const data = jwt.verify(token, process.env.SECRET_KEY);
-//         req.usuario        = data.usuario   // en el request
-//         req.rol            = data.rol
-//         res.locals.usuario = data.usuario   // en el response para
-//         res.locals.rol     = data.rol       // para que se tenga acceso en las plantillas
-//         console.log('En el request ', req.usuario, req.rol)
-//     }
-//     next()
-// }
-//
-// //...
-//
-// app.use(autentificación)
+const autentificacion = (req, res, next) => {
+    const token = req.cookies.access_token;
+    if (token) {
+        const data = jwt.verify(token, process.env.SECRET_KEY);
+        req.usuario        = data.usuario   // en el request
+        req.rol            = data.rol
+        res.locals.usuario = data.usuario   // en el response para
+        res.locals.rol     = data.rol       // para que se tenga acceso en las plantillas
+        logger.info(`Acaba de entrar el usuario ${req.usuario}, que es ${req.rol} `)
+    }
+    next()
+}
+
+//...
+
+app.use(autentificacion)

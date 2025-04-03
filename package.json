@@ -14,10 +14,12 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "node-fetch": "^3.3.2",
-    "nunjucks": "^3.2.4"
+    "nunjucks": "^3.2.4",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
-    "playwright": "^1.51.0",
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^22.14.0",
     "prisma": "^6.5.0"
   }
 }
