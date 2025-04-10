@@ -1,0 +1,14 @@
+@host = http://localhost:8000
+
+
+
+GET {{host}}/api/usuario/jesusmartinezgarrido@gmail.com
+
+###
+
+
+GET {{host}}/api/obras/cuantas
+
+###
+
+GET {{host}}/api/obra/12

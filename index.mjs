@@ -1,10 +1,12 @@
 import express   from 'express'
 import nunjucks  from 'nunjucks'
-
 import cookieParser from "cookie-parser"
 import jwt from "jsonwebtoken"
-
 import logger from './scripts/logger.mjs'
+import swaggerJsdoc from "swagger-jsdoc"
+import swaggerUi from "swagger-ui-express"
+
+
 
 const IN = process.env.IN || 'development'                                                                    // development o production
 const app = express()
@@ -19,12 +21,51 @@ app.set('view engine', 'html')
 app.use(express.urlencoded({ extended: true }))  // para poner los parámetros del form en el request
 app.use(cookieParser())
 
+const options = {
+    definition: {
+        openapi: "3.1.0",
+        info: {
+            title: "LogRocket Express API with Swagger",
+            version: "0.1.0",
+            description:
+                "Esta es la API del museo arqueológico",
+            license: {
+                name: "MIT",
+                url: "https://spdx.org/licenses/MIT.html",
+            },
+            contact: {
+                name: "LogRocket",
+                url: "https://logrocket.com",
+                email: "info@email.com",
+            },
+        },
+        servers: [
+            {
+                url: "http://localhost:8000",
+            },
+        ],
+    },
+    apis: ["./routes/apis.mjs"],
+};
+
+const specs = swaggerJsdoc(options);
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(specs)
+);
+
+
 import obrasRouter from "./routes/obras.mjs"
 app.use("/obras", obrasRouter);
 app.use(express.static('public'));
 
 import usuariosRouter from "./routes/usuarios.mjs"
 app.use("/usuarios", usuariosRouter);
+app.use(express.static('public'));
+
+import apiRouter from "./routes/api.mjs"
+app.use("/api", apiRouter);
 app.use(express.static('public'));
 
 app.get('/hola', (req, res) => {          // test para el servidor
