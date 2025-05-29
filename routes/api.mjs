@@ -2,9 +2,10 @@ import express from "express"
 
 const router = express.Router();
 
+
 import {PrismaClient} from '@prisma/client'
 import logger from '../scripts/logger.mjs'
-
+const prisma = new PrismaClient();
 
 /**
  * @swagger
@@ -71,5 +72,22 @@ router.get('/obra/cuantas', async (req, res) => {
     }
 })
 
+router.get('/obras', async (req, res) => {
+  try {
+    logger.debug("GET /obras")
+
+    const obras = await prisma.obra.findMany()
+
+    if (obras.length > 0) {
+      res.status(200).json(obras)
+    } else {
+      res.status(404).json({ ok: false, msg: "No hay obras disponibles" })
+    }
+
+  } catch (error) {
+    logger.error(`Error en /api/obras: ${error}`)
+    res.status(500).json({ ok: false, msg: "Error interno del servidor" })
+  }
+})
 
 export default router;

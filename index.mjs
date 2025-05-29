@@ -5,11 +5,12 @@ import jwt from "jsonwebtoken"
 import logger from './scripts/logger.mjs'
 import swaggerJsdoc from "swagger-jsdoc"
 import swaggerUi from "swagger-ui-express"
-
+import cors from 'cors'
 
 
 const IN = process.env.IN || 'development'                                                                    // development o production
 const app = express()
+app.use(cors()) 
 
 nunjucks.configure('views', {                                                                      // directorio 'views' para las plantillas html
     autoescape: true,
